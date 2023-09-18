@@ -1,40 +1,116 @@
-import requests
-from bs4 import BeautifulSoup
+import time
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# URL de la página web que deseas obtener
-url = 'https://www.google.com/url?client=internal-element-cse&cx=008572255874373046644:chip1p1uf-4&q=https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf%3BPortalJSESSION%3DdBPgSewfsrHLbNgvEf4MYJvBthWw5hkhQzjOC1XQzXkSJJmNdMZy!1891780822%3FtaskflowId%3Dtask-flow-AC_CatalogoAsignaturas&sa=U&ved=2ahUKEwip-8TcqKmBAxVPRzABHeuWAPoQFnoECAYQAQ&usg=AOvVaw2_YModhnDvcyaJ8n8jbejC'
+# Inicializa el controlador de Selenium (asegúrate de tener el controlador del navegador instalado)
+driver = webdriver.Chrome()  # Reemplaza con la ubicación de tu controlador
 
-# Realiza una solicitud HTTP GET a la URL
-response = requests.get(url)
+# URL de la página web que deseas acceder
+url = 'https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas'
 
-# Verifica si la solicitud se realizó correctamente (código de respuesta 200)
-if response.status_code == 200:
-    # Obtén el contenido HTML de la página
-    html_content = response.text
-    
-    # Parsea el contenido HTML utilizando BeautifulSoup
-    soup = BeautifulSoup(html_content, 'html.parser')
-    
-    
-    
-    # Encuentra todos los elementos <select> en la página
-    select_elements = soup.find_all('select')
-    with open('selectlist.txt', 'w', encoding='utf-8') as file:
-    # Itera a través de cada elemento <select> y escribe su contenido en el archivo
-        for select_element in select_elements:
-            file.write(str(select_element) + '\n')
-    # options = [0,6,26]
-    # iterator = 0
-    # # Itera a través de cada elemento <select>
-    # for select_element in select_elements:
-    #     print(select_element,'\n')
-    #     option_to_select = select_element.find('option', {'value': str(options[iterator])})
-    #     iterator += 1
-    #     print(option_to_select)
-    #     if option_to_select:
-    #         # Cambia el atributo 'selected' de la opción para seleccionarla
-    #         option_to_select['selected'] = 'selected'
-    
-    
-else:
-    print(f'Error al obtener la página. Código de respuesta: {response.status_code}')
+# Abre la página web en el navegador controlado por Selenium
+driver.get(url)
+
+# time.sleep(3)
+
+
+# Primer select pregrado/posgrado...
+# =========================================================================================
+
+# Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
+elemento = driver.find_element(By.ID, 'pt1:r1:0:soc1::content')
+
+# Convierte el elemento <select> en un objeto Select
+select = Select(elemento)
+
+# Utiliza select_by_value para seleccionar una opción por su valor
+select.select_by_value('0')
+
+time.sleep(1)
+
+# Segundo select sede
+# =========================================================================================
+
+# Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
+elemento = driver.find_element(By.ID, 'pt1:r1:0:soc9::content')
+
+# Convierte el elemento <select> en un objeto Select
+select = Select(elemento)
+
+# Utiliza select_by_value para seleccionar una opción por su valor
+select.select_by_value('6')
+
+time.sleep(1)
+
+# tercer select facultad
+# =========================================================================================
+
+# Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
+elemento = driver.find_element(By.ID, 'pt1:r1:0:soc2::content')
+
+# Convierte el elemento <select> en un objeto Select
+select = Select(elemento)
+
+# Utiliza select_by_value para seleccionar una opción por su valor
+select.select_by_value('4')
+
+time.sleep(1)
+
+# cuarto select plan de estudios
+# =========================================================================================
+
+# Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
+elemento = driver.find_element(By.ID, 'pt1:r1:0:soc3::content')
+
+# Convierte el elemento <select> en un objeto Select
+select = Select(elemento)
+
+
+# Utiliza select_by_value para seleccionar una opción por su valor
+select.select_by_value('12')
+
+time.sleep(1)
+
+# Presionar boton
+# =========================================================================================
+# Ubica el elemento <a> por su clase "af_button_link"
+boton_mostrar = driver.find_element(By.CLASS_NAME, 'af_button_link')
+
+# Hace clic en el botón
+boton_mostrar.click()
+
+time.sleep(1)
+
+
+# extraer datos
+# =========================================================================================
+
+# Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
+elemento = driver.find_element(By.ID, 'pt1:r1:0:t4::db')
+
+# Convierte el elemento <select> en un objeto Select
+# select = Select(elemento)
+
+# Obtiene el texto del elemento
+texto = elemento.text
+
+with open('recoveryFile.txt', 'w', encoding='utf-8') as file:
+        # Itera a través de cada elemento <select> y escribe su contenido en el archivo
+        file.write(str(texto)) 
+
+# Imprime el texto
+# print(texto)
+
+
+
+
+# a = input('waiting')
+
+# elemento = driver.find_element_by_id('pt1:r1:0:pb3')
+# elemento.click()
+
+# Cierra el navegador controlado por Selenium cuando hayas terminado
+driver.quit()
