@@ -1,4 +1,5 @@
 import time
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
@@ -84,33 +85,31 @@ boton_mostrar.click()
 
 time.sleep(1)
 
-
+# =========================================================================================
 # extraer datos
 # =========================================================================================
 
 # Encuentra el primer elemento <select> por su identificador, nombre, u otro selector
 elemento = driver.find_element(By.ID, 'pt1:r1:0:t4::db')
 
-# Convierte el elemento <select> en un objeto Select
-# select = Select(elemento)
+rows = driver.find_elements()
+
 
 # Obtiene el texto del elemento
+
 texto = elemento.text
 
-with open('recoveryFile.txt', 'w', encoding='utf-8') as file:
-        # Itera a través de cada elemento <select> y escribe su contenido en el archivo
-        file.write(str(texto)) 
+contenido_html = driver.page_source
 
-# Imprime el texto
-# print(texto)
-
-
-
-
-# a = input('waiting')
-
-# elemento = driver.find_element_by_id('pt1:r1:0:pb3')
-# elemento.click()
-
-# Cierra el navegador controlado por Selenium cuando hayas terminado
 driver.quit()
+
+
+soup = BeautifulSoup(contenido_html, 'html.parser')
+
+tablaContenido = soup.find('div', id='pt1:r1:0:t4::db')
+
+tipologiaMateria = tablaContenido.find_all('tr')
+with open('recoveryFile', 'w', encoding='utf-8') as file:
+    for k in tipologiaMateria:
+        XD = k.find_all('td')
+        file.write(XD[0].get_text() + ' ' + XD[1].get_text() + ' ' + XD[2].get_text() + ' ' + XD[3].get_text() + '\n')
